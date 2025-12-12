@@ -1,0 +1,3077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brother's Coffee Shop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ========== RESET & BASE ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #8B4513;
+            --secondary: #D2691E;
+            --light: #F5DEB3;
+            --dark: #654321;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --info: #17a2b8;
+            --gray: #6c757d;
+            --light-gray: #f8f9fa;
+            --admin-primary: #2c3e50;
+            --admin-secondary: #3498db;
+            --green-tea: #2E8B57;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            scroll-behavior: smooth;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ========== NAVBAR ========== */
+        .navbar {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            color: var(--light);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .cart-icon {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--danger);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        .btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--secondary);
+            color: var(--secondary);
+        }
+
+        .btn-outline:hover {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: var(--dark);
+        }
+
+        /* ========== AUTH PAGE ========== */
+        #authPage {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 450px;
+            padding: 20px;
+        }
+
+        .auth-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+            padding: 2rem;
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #eee;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            background: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .auth-tab.active {
+            color: var(--primary);
+        }
+
+        .auth-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .auth-form h2 {
+            text-align: center;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-subtitle {
+            text-align: center;
+            color: var(--gray);
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(139, 69, 19, 0.1);
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-top: 0.5rem;
+        }
+
+        .forgot-password a {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+
+        /* Remember Me styling */
+        .remember-me {
+            display: flex;
+            align-items: center;
+            margin: 1rem 0;
+        }
+
+        .remember-me input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+
+        .remember-me label {
+            margin: 0;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .auth-divider {
+            text-align: center;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+
+        .auth-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #eee;
+        }
+
+        .auth-divider span {
+            background: white;
+            padding: 0 1rem;
+            color: #666;
+            font-size: 0.9rem;
+            position: relative;
+        }
+
+        /* ========== MAIN CONTENT ========== */
+        #mainApp {
+            display: none;
+            padding-top: 80px;
+        }
+
+        /* Page Sections */
+        .page-section {
+            padding: 80px 0;
+            min-height: 100vh;
+        }
+
+        .page-section:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1498804103079-a6351b050096?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            border-radius: 10px;
+            padding: 5rem 0;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            color: var(--light);
+        }
+
+        /* Section Titles */
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            color: var(--dark);
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: var(--secondary);
+        }
+
+        /* Menu Section */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .menu-item {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .menu-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .menu-item-img {
+            height: 200px;
+            background: var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .menu-item-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .menu-item:hover .menu-item-img img {
+            transform: scale(1.05);
+        }
+
+        .menu-item-content {
+            padding: 1.5rem;
+        }
+
+        .menu-item-title {
+            font-size: 1.5rem;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .menu-item-desc {
+            color: var(--gray);
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .menu-item-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .price {
+            font-size: 1.3rem;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .time-badge {
+            background: var(--info);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .quantity-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 1px solid var(--primary);
+            background: white;
+            color: var(--primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .quantity-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .quantity-input {
+            width: 50px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 0.3rem;
+            font-size: 1rem;
+        }
+
+        /* Orders Section */
+        .orders-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .order-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            border-left: 5px solid var(--primary);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .order-id {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .order-status {
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .status-pending { background: var(--warning); color: var(--dark); }
+        .status-preparing { background: var(--info); color: white; }
+        .status-ready { background: #17a2b8; color: white; }
+        .status-completed { background: var(--success); color: white; }
+        .status-cancelled { background: var(--danger); color: white; }
+
+        .order-items {
+            margin: 1rem 0;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .order-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #ddd;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .order-total {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: var(--dark);
+        }
+
+        .estimated-time {
+            color: var(--info);
+            font-weight: bold;
+        }
+
+        /* Green Tea Gallery Section */
+        .green-tea-gallery {
+            background: linear-gradient(to right, #f8fff8, #e8f5e8);
+            padding: 4rem 0;
+            margin: 2rem 0;
+            border-radius: 15px;
+        }
+
+        .gallery-title {
+            text-align: center;
+            color: var(--green-tea);
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .gallery-subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 3rem;
+            font-size: 1.1rem;
+        }
+
+        .tea-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .tea-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(46, 139, 87, 0.1);
+            transition: all 0.3s;
+            border: 1px solid #e0f0e0;
+        }
+
+        .tea-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 25px rgba(46, 139, 87, 0.2);
+        }
+
+        .tea-img {
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .tea-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .tea-card:hover .tea-img img {
+            transform: scale(1.1);
+        }
+
+        .tea-info {
+            padding: 1.5rem;
+        }
+
+        .tea-name {
+            color: var(--green-tea);
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .tea-desc {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .tea-type {
+            display: inline-block;
+            background: var(--green-tea);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        /* About Section */
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            padding: 3rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .about-content h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .about-content p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+            color: var(--gray);
+        }
+
+        /* Features */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        /* ========== MODALS ========== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--light);
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            color: var(--dark);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+            transition: color 0.3s;
+        }
+
+        .close-modal:hover {
+            color: var(--danger);
+        }
+
+        /* Cart Items */
+        .cart-items {
+            margin-bottom: 2rem;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            background: var(--light-gray);
+            border-radius: 5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .cart-item-info h4 {
+            margin-bottom: 0.3rem;
+            color: var(--dark);
+        }
+
+        .cart-item-price {
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .cart-total {
+            text-align: right;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--dark);
+            margin: 1.5rem 0;
+            padding-top: 1rem;
+            border-top: 2px solid var(--light);
+        }
+
+        /* ========== ADMIN PANEL ========== */
+        #adminPanel {
+            display: none;
+            padding-top: 80px;
+            background: #f8f9fa;
+            min-height: 100vh;
+        }
+
+        .admin-navbar {
+            background: var(--admin-primary);
+            color: white;
+            padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .admin-container {
+            padding: 2rem;
+        }
+
+        .admin-title {
+            font-size: 2rem;
+            color: var(--admin-primary);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .admin-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .admin-card {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            border-top: 5px solid var(--admin-secondary);
+        }
+
+        .admin-card-icon {
+            font-size: 2.5rem;
+            color: var(--admin-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .admin-card-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--admin-primary);
+            margin: 0.5rem 0;
+        }
+
+        .admin-card-title {
+            color: var(--gray);
+            font-size: 1.1rem;
+        }
+
+        .admin-tabs {
+            display: flex;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .admin-tab {
+            padding: 1rem 2rem;
+            background: none;
+            border: none;
+            font-size: 1.1rem;
+            cursor: pointer;
+            color: #666;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .admin-tab.active {
+            color: var(--admin-primary);
+            border-bottom: 3px solid var(--admin-secondary);
+            font-weight: bold;
+        }
+
+        .admin-content {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .admin-table th {
+            background: var(--admin-primary);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+        }
+
+        .admin-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .admin-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-select {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+        }
+
+        /* ========== FOOTER ========== */
+        .footer {
+            background: #6F4E37;
+            color: white;
+            padding: 40px 0;
+            margin-top: 50px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .footer-section p, .footer-section a {
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.6;
+            text-decoration: none;
+        }
+
+        .footer-section a:hover {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* ========== MESSAGES ========== */
+        .message {
+            padding: 1rem;
+            border-radius: 5px;
+            margin: 1rem 0;
+            text-align: center;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .message.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        /* ========== EMPTY STATES ========== */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--gray);
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: #ddd;
+            margin-bottom: 1rem;
+        }
+
+        /* ========== UTILITY ========== */
+        .d-none { display: none !important; }
+        .d-block { display: block !important; }
+        .w-100 { width: 100%; }
+        .text-center { text-align: center; }
+        .mb-2 { margin-bottom: 1rem; }
+        .mt-2 { margin-top: 1rem; }
+        .mt-3 { margin-top: 1.5rem; }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tea-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-section {
+                padding: 60px 0;
+            }
+
+            .admin-tabs {
+                flex-direction: column;
+            }
+
+            .admin-tab {
+                width: 100%;
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ========== AUTHENTICATION PAGE ========== -->
+    <div id="authPage">
+        <div class="auth-container">
+            <div class="auth-card">
+                <!-- Tabs -->
+                <div class="auth-tabs">
+                    <button class="auth-tab active" id="loginTab">Login</button>
+                    <button class="auth-tab" id="signupTab">Sign Up</button>
+                </div>
+                
+                <!-- Login Form -->
+                <div id="loginForm" class="auth-form active">
+                    <h2>Welcome Back</h2>
+                    <p class="auth-subtitle">Login to Brother's Coffee Shop</p>
+                    
+                    <div class="form-group">
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" placeholder="Enter your email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                        <div class="forgot-password">
+                            <a href="#" id="forgotPassword">Forgot Password?</a>
+                        </div>
+                    </div>
+                    
+                    <!-- NEW: Remember Me Checkbox -->
+                    <div class="form-group remember-me">
+                        <input type="checkbox" id="rememberMe">
+                        <label for="rememberMe">Remember me</label>
+                    </div>
+                    
+                    <button class="btn w-100" id="loginSubmit">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </button>
+                    
+                    <div class="auth-divider">
+                        <span>Don't have an account?</span>
+                    </div>
+                    
+                    <button class="btn btn-outline w-100" id="switchToSignup">
+                        <i class="fas fa-user-plus"></i> Create Account
+                    </button>
+                    
+                    <div class="mt-3 text-center">
+                        <button class="btn btn-warning w-100" id="demoAdminLogin">
+                            <i class="fas fa-user-secret"></i> Login as Demo Admin
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Signup Form -->
+                <div id="signupForm" class="auth-form">
+                    <h2>Create Account</h2>
+                    <p class="auth-subtitle">Join Brother's Coffee Shop</p>
+                    
+                    <div class="form-group">
+                        <label for="signupName">Full Name</label>
+                        <input type="text" id="signupName" placeholder="Enter your full name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="signupEmail">Email</label>
+                        <input type="email" id="signupEmail" placeholder="Enter your email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="signupPassword">Password</label>
+                        <input type="password" id="signupPassword" placeholder="Create a password" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="signupConfirmPassword">Confirm Password</label>
+                        <input type="password" id="signupConfirmPassword" placeholder="Confirm your password" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="signupPhone">Phone Number</label>
+                        <input type="tel" id="signupPhone" placeholder="Enter your phone number">
+                    </div>
+                    
+                    <button class="btn w-100" id="signupSubmit">
+                        <i class="fas fa-user-plus"></i> Create Account
+                    </button>
+                    
+                    <div class="auth-divider">
+                        <span>Already have an account?</span>
+                    </div>
+                    
+                    <button class="btn btn-outline w-100" id="switchToLogin">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </button>
+                </div>
+                
+                <!-- Forgot Password Form -->
+                <div id="forgotPasswordForm" class="auth-form">
+                    <h2>Reset Password</h2>
+                    <p class="auth-subtitle">Enter your email to reset password</p>
+                    
+                    <div class="form-group">
+                        <label for="resetEmail">Email</label>
+                        <input type="email" id="resetEmail" placeholder="Enter your email" required>
+                    </div>
+                    
+                    <button class="btn w-100" id="resetPasswordSubmit">
+                        <i class="fas fa-paper-plane"></i> Send Reset Link
+                    </button>
+                    
+                    <div class="auth-divider">
+                        <span>Remember your password?</span>
+                    </div>
+                    
+                    <button class="btn btn-outline w-100" id="backToLogin">
+                        <i class="fas fa-arrow-left"></i> Back to Login
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== MAIN APPLICATION (Customer View) ========== -->
+    <div id="mainApp">
+        <!-- Navbar -->
+        <nav class="navbar">
+            <div class="container nav-container">
+                <div class="logo">
+                    <i class="fas fa-coffee"></i>
+                    <span>Brother's Coffee</span>
+                </div>
+                <div class="nav-links">
+                    <a href="#home" class="nav-link active">Home</a>
+                    <a href="#menu" class="nav-link">Menu</a>
+                    <a href="#greenTea" class="nav-link">Green Tea Gallery</a>
+                    <a href="#orders" class="nav-link">My Orders</a>
+                    <a href="#about" class="nav-link">About</a>
+                    
+                    <!-- NEW: Admin Link (only shows for admin users) -->
+                    <a href="#" id="adminLink" class="nav-link d-none">
+                        <i class="fas fa-user-shield"></i> Admin Panel
+                    </a>
+                    
+                    <div class="cart-icon" id="cartIcon">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </div>
+                    <div id="userSection">
+                        <span id="userName" style="color: white; margin-right: 10px;"></span>
+                        <button class="btn btn-danger" id="logoutBtn">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content - All Sections on One Page -->
+        <main>
+            <!-- Home Section -->
+            <section id="home" class="page-section">
+                <div class="container">
+                    <div class="hero">
+                        <h1>Welcome to Brother's Coffee Shop</h1>
+                        <p>Experience the finest coffee and pastries in town. Freshly brewed, perfectly served.</p>
+                        <a href="#menu" class="btn">
+                            <i class="fas fa-utensils"></i> View Menu
+                        </a>
+                    </div>
+                    
+                    <h2 class="section-title">Why Choose Us</h2>
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-coffee"></i>
+                            </div>
+                            <h3>Premium Coffee</h3>
+                            <p>Freshly roasted beans from around the world, brewed to perfection.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-bread-slice"></i>
+                            </div>
+                            <h3>Fresh Pastries</h3>
+                            <p>Daily baked goods made with love and the finest ingredients.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <h3>Fast Service</h3>
+                            <p>Quick preparation and real-time order tracking for your convenience.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <h3>Quality Guarantee</h3>
+                            <p>We guarantee the quality of every cup and every bite.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Menu Section -->
+            <section id="menu" class="page-section">
+                <div class="container">
+                    <h2 class="section-title">Our Menu</h2>
+                    <div class="menu-grid" id="menuGrid">
+                        <!-- Menu items loaded by JavaScript with images -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Green Tea Gallery Section -->
+            <section id="greenTea" class="page-section">
+                <div class="container">
+                    <div class="green-tea-gallery">
+                        <h2 class="gallery-title">Green Tea Collection</h2>
+                        <p class="gallery-subtitle">Discover our premium selection of green teas from around the world</p>
+                        
+                        <div class="tea-grid">
+                            <div class="tea-card">
+                                <div class="tea-img">
+                                    <img src="https://www.matchamaiden.com/wp-content/uploads/2020/03/Japanese-Matcha-Green-Tea.jpg" alt="Japanese Green Tea">
+                                </div>
+                                <div class="tea-info">
+                                    <h3 class="tea-name">Japanese Sencha</h3>
+                                    <p class="tea-desc">Premium steamed green tea from Japan with a fresh, grassy flavor and rich antioxidants.</p>
+                                    <span class="tea-type">Traditional</span>
+                                </div>
+                            </div>
+                            
+                            <div class="tea-card">
+                                <div class="tea-img">
+                                    <img src="https://images.unsplash.com/photo-1561047029-3000c68339ca?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Matcha Green Tea">
+                                </div>
+                                <div class="tea-info">
+                                    <h3 class="tea-name">Ceremonial Matcha</h3>
+                                    <p class="tea-desc">Finest stone-ground green tea powder, vibrant in color and packed with health benefits.</p>
+                                    <span class="tea-type">Powder</span>
+                                </div>
+                            </div>
+                            
+                            <div class="tea-card">
+                                <div class="tea-img">
+                                    <img src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Chinese Green Tea">
+                                </div>
+                                <div class="tea-info">
+                                    <h3 class="tea-name">Chinese Dragon Well</h3>
+                                    <p class="tea-desc">Pan-fired green tea with a distinctive flat leaf appearance and chestnut-like flavor.</p>
+                                    <span class="tea-type">Pan-fired</span>
+                                </div>
+                            </div>
+                            
+                            <div class="tea-card">
+                                <div class="tea-img">
+                                    <img src="https://images.unsplash.com/photo-1498804103079-a6351b050096?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Green Tea Leaves">
+                                </div>
+                                <div class="tea-info">
+                                    <h3 class="tea-name">Organic Green Tea</h3>
+                                    <p class="tea-desc">Certified organic green tea leaves, sustainably sourced and naturally processed.</p>
+                                    <span class="tea-type">Organic</span>
+                                </div>
+                            </div>
+                            
+                            <div class="tea-card">
+                                <div class="tea-img">
+                                    <img src="https://images.unsplash.com/photo-1559056199-641a0ac8b55e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Jasmine Green Tea">
+                                </div>
+                                <div class="tea-info">
+                                    <h3 class="tea-name">Jasmine Pearl Green Tea</h3>
+                                    <p class="tea-desc">Hand-rolled green tea pearls scented with fresh jasmine flowers for a floral aroma.</p>
+                                    <span class="tea-type">Floral</span>
+                                </div>
+                            </div>
+                            
+                            <div class="tea-card">
+                                <div class="tea-img">
+                                    <img src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Gunpowder Green Tea">
+                                </div>
+                                <div class="tea-info">
+                                    <h3 class="tea-name">Gunpowder Green Tea</h3>
+                                    <p class="tea-desc">Rolled into small pellets that unfurl when brewed, producing a strong, smoky flavor.</p>
+                                    <span class="tea-type">Rolled</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center mt-4">
+                            <p style="color: var(--green-tea); font-style: italic;">
+                                <i class="fas fa-leaf"></i> All our green teas are carefully selected and brewed at optimal temperatures to preserve their natural antioxidants and delicate flavors.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Orders Section -->
+            <section id="orders" class="page-section">
+                <div class="container">
+                    <h2 class="section-title">My Orders</h2>
+                    <div class="orders-list" id="ordersList">
+                        <!-- Orders loaded by JavaScript -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- About Section -->
+            <section id="about" class="page-section">
+                <div class="container">
+                    <h2 class="section-title">About Us</h2>
+                    <div class="about-content">
+                        <h2>About Brother's Coffee Shop</h2>
+                        <p>Welcome to Brother's Coffee Shop, where every cup tells a story. Founded in 2024 by two brothers passionate about quality coffee, our shop brings you the finest selection of coffee beans from around the world.</p>
+                        <p>We believe in sustainability, quality, and community. All our beans are ethically sourced, and our pastries are baked fresh daily using locally sourced ingredients whenever possible.</p>
+                        <p>Our mission is simple: to serve great coffee in a warm, welcoming environment where everyone feels like family.</p>
+                        
+                        <div class="contact-info mt-3">
+                            <h3>Contact Us</h3>
+                            <p><i class="fas fa-map-marker-alt"></i> 123 Coffee Street, Brew City</p>
+                            <p><i class="fas fa-phone"></i> (555) 123-4567</p>
+                            <p><i class="fas fa-envelope"></i> hello@brotherscoffee.com</p>
+                            <p><i class="fas fa-clock"></i> Open: Mon-Sun 7:00 AM - 9:00 PM</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-section">
+                        <h3>Brother's Coffee Shop</h3>
+                        <p>Best quality coffee with a warm and cozy atmosphere. Your favourite place to relax, sip & enjoy!</p>
+                    </div>
+                    
+                    <div class="footer-section">
+                        <h3>Quick Links</h3>
+                        <ul class="footer-links">
+                            <li><a href="#home">Home</a></li>
+                            <li><a href="#menu">Menu</a></li>
+                            <li><a href="#greenTea">Green Tea Gallery</a></li>
+                            <li><a href="#orders">My Orders</a></li>
+                            <li><a href="#about">About</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-section">
+                        <h3>Contact Us</h3>
+                        <p><i class="fas fa-map-marker-alt"></i> Near City Center, Pune</p>
+                        <p><i class="fas fa-phone"></i> +91 9876543210</p>
+                        <p><i class="fas fa-envelope"></i> brotherscoffee@gmail.com</p>
+                    </div>
+                    
+                    <div class="footer-section">
+                        <h3>Follow Us</h3>
+                        <div class="social-links">
+                            <a href="#" style="color:white; margin-right:10px;"><i class="fab fa-facebook"></i> Facebook</a><br>
+                            <a href="#" style="color:white; margin-right:10px;"><i class="fab fa-instagram"></i> Instagram</a><br>
+                            <a href="#" style="color:white; margin-right:10px;"><i class="fab fa-youtube"></i> YouTube</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="footer-bottom">
+                    <p>© 2025 Brother's Coffee Shop | All Rights Reserved</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- ========== ADMIN PANEL ========== -->
+    <div id="adminPanel">
+        <!-- Admin Navbar -->
+        <nav class="admin-navbar">
+            <div class="container nav-container">
+                <div class="logo">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Brother's Coffee Admin</span>
+                </div>
+                <div class="nav-links">
+                    <span id="adminUserName" style="color: white; margin-right: 10px;"></span>
+                    <button class="btn btn-danger" id="adminLogoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                    <button class="btn btn-outline" id="goToUserView">
+                        <i class="fas fa-store"></i> User View
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Admin Content -->
+        <div class="admin-container">
+            <h1 class="admin-title">Admin Dashboard</h1>
+            
+            <!-- Stats Cards -->
+            <div class="admin-cards">
+                <div class="admin-card">
+                    <div class="admin-card-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="admin-card-number" id="totalOrders">0</div>
+                    <div class="admin-card-title">Total Orders</div>
+                </div>
+                
+                <div class="admin-card">
+                    <div class="admin-card-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="admin-card-number" id="pendingOrders">0</div>
+                    <div class="admin-card-title">Pending Orders</div>
+                </div>
+                
+                <div class="admin-card">
+                    <div class="admin-card-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="admin-card-number" id="totalCustomers">0</div>
+                    <div class="admin-card-title">Customers</div>
+                </div>
+                
+                <div class="admin-card">
+                    <div class="admin-card-icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <div class="admin-card-number" id="totalRevenue">$0</div>
+                    <div class="admin-card-title">Total Revenue</div>
+                </div>
+            </div>
+
+            <!-- Admin Tabs -->
+            <div class="admin-tabs">
+                <button class="admin-tab active" data-tab="orders">Orders Management</button>
+                <button class="admin-tab" data-tab="menu">Menu Management</button>
+                <button class="admin-tab" data-tab="users">Customers</button>
+                <button class="admin-tab" data-tab="analytics">Analytics</button>
+            </div>
+
+            <!-- Orders Management Tab -->
+            <div class="admin-content" id="ordersTab">
+                <h2>Orders Management</h2>
+                <div class="table-responsive">
+                    <table class="admin-table" id="adminOrdersTable">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Items</th>
+                                <th>Total</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminOrdersList">
+                            <!-- Orders loaded by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Menu Management Tab -->
+            <div class="admin-content d-none" id="menuTab">
+                <h2>Menu Management</h2>
+                <div style="text-align: right; margin-bottom: 1rem;">
+                    <button class="btn" id="addMenuItemBtn">
+                        <i class="fas fa-plus"></i> Add Menu Item
+                    </button>
+                </div>
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Price</th>
+                                <th>Category</th>
+                                <th>Prep Time</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminMenuList">
+                            <!-- Menu items loaded by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Customers Tab -->
+            <div class="admin-content d-none" id="usersTab">
+                <h2>Customers</h2>
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Orders</th>
+                                <th>Joined</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminUsersList">
+                            <!-- Users loaded by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Analytics Tab -->
+            <div class="admin-content d-none" id="analyticsTab">
+                <h2>Analytics</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <h3>Today's Stats</h3>
+                        <div style="font-size: 2rem; color: var(--primary); margin: 1rem 0;" id="todayOrders">0</div>
+                        <p>Orders Today</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Top Items</h3>
+                        <div id="topItems">
+                            <!-- Top items loaded by JavaScript -->
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Revenue</h3>
+                        <div style="font-size: 2rem; color: var(--success); margin: 1rem 0;" id="todayRevenue">$0</div>
+                        <p>Today's Revenue</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== MODALS ========== -->
+    <!-- Cart Modal -->
+    <div class="modal" id="cartModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Your Cart</h3>
+                <button class="close-modal" id="closeCartModal">&times;</button>
+            </div>
+            <div class="cart-items" id="cartItems">
+                <!-- Cart items loaded by JavaScript -->
+            </div>
+            <div class="cart-total">
+                Total: $<span id="cartTotal">0.00</span>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn btn-outline w-100" onclick="hideModal('cartModal')">
+                    <i class="fas fa-arrow-left"></i> Continue Shopping
+                </button>
+                <button class="btn btn-success w-100" id="placeOrderBtn">
+                    <i class="fas fa-check"></i> Place Order
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Success Modal -->
+    <div class="modal" id="orderSuccessModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Order Placed Successfully!</h3>
+                <button class="close-modal" id="closeSuccessModal">&times;</button>
+            </div>
+            <div class="message success">
+                <i class="fas fa-check-circle fa-3x mb-2"></i>
+                <h3>Thank You!</h3>
+                <p>Your order has been placed successfully.</p>
+                <p class="mb-1">Order ID: <strong id="orderIdDisplay"></strong></p>
+                <p>Estimated Preparation Time: <strong id="estimatedTime"></strong></p>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn btn-outline w-100" onclick="hideModal('orderSuccessModal'); scrollToSection('orders')">
+                    View Orders
+                </button>
+                <button class="btn w-100" onclick="hideModal('orderSuccessModal'); scrollToSection('menu')">
+                    Continue Shopping
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Menu Item Modal -->
+    <div class="modal" id="menuItemModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="menuItemModalTitle">Add Menu Item</h3>
+                <button class="close-modal" onclick="hideModal('menuItemModal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label for="itemName">Item Name</label>
+                <input type="text" id="itemName" placeholder="Enter item name">
+            </div>
+            <div class="form-group">
+                <label for="itemDescription">Description</label>
+                <input type="text" id="itemDescription" placeholder="Enter item description">
+            </div>
+            <div class="form-group">
+                <label for="itemPrice">Price ($)</label>
+                <input type="number" id="itemPrice" placeholder="Enter price" step="0.01">
+            </div>
+            <div class="form-group">
+                <label for="itemCategory">Category</label>
+                <select id="itemCategory">
+                    <option value="Coffee">Coffee</option>
+                    <option value="Tea">Tea</option>
+                    <option value="Pastry">Pastry</option>
+                    <option value="Sandwich">Sandwich</option>
+                    <option value="Dessert">Dessert</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="itemPrepTime">Preparation Time (minutes)</label>
+                <input type="number" id="itemPrepTime" placeholder="Enter prep time">
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn btn-outline w-100" onclick="hideModal('menuItemModal')">
+                    Cancel
+                </button>
+                <button class="btn btn-success w-100" id="saveMenuItemBtn">
+                    Save Item
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== JAVASCRIPT ========== -->
+    <script>
+        // ========== CONFIGURATION ==========
+        const ADMIN_EMAIL = 'admin@brotherscoffee.com';
+        const ADMIN_PASSWORD = 'admin123';
+
+        // ========== STATE MANAGEMENT ==========
+        let currentUser = null;
+        let cart = [];
+        let menuItems = [];
+        let editingMenuItemId = null;
+
+        // ========== MENU ITEMS WITH IMAGES ==========
+        const menuData = [
+            {
+                id: '1',
+                name: 'Espresso',
+                description: 'Strong black coffee shot',
+                price: 3.50,
+                category: 'Coffee',
+                preparationTime: 3,
+                image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'
+            },
+            {
+                id: '2',
+                name: 'Cappuccino',
+                description: 'Espresso with steamed milk foam',
+                price: 4.50,
+                category: 'Coffee',
+                preparationTime: 5,
+                image: 'https://www.arakucoffee.com/cdn/shop/files/methode-preparation-espresso.jpg?v=1692888003&width=640'
+            },
+            {
+                id: '3',
+                name: 'Latte',
+                description: 'Espresso with steamed milk',
+                price: 5.00,
+                category: 'Coffee',
+                preparationTime: 6,
+                image: 'https://images.unsplash.com/photo-1561047029-3000c68339ca?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'
+            },
+            {
+                id: '4',
+                name: 'Green Tea',
+                description: 'Fresh green tea leaves',
+                price: 2.50,
+                category: 'Tea',
+                preparationTime: 4,
+                image: 'https://images.unsplash.com/photo-1550948392-fd5a8f5c6f37?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'
+            },
+            {
+                id: '5',
+                name: 'Croissant',
+                description: 'Freshly baked butter croissant',
+                price: 3.00,
+                category: 'Pastry',
+                preparationTime: 2,
+                image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3zH7Ub673o4VGGu4kGTqlTii4go5dy0vuRA&s'
+            },
+            {
+                id: '6',
+                name: 'Ham & Cheese Sandwich',
+                description: 'Fresh sandwich with ham and cheese',
+                price: 6.50,
+                category: 'Sandwich',
+                preparationTime: 8,
+                image: 'https://images.unsplash.com/photo-1567234669003-dce7a7a88821?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'
+            },
+            {
+                id: '7',
+                name: 'Chocolate Chip Cookie',
+                description: 'Freshly baked with chocolate chips',
+                price: 2.00,
+                category: 'Pastry',
+                preparationTime: 1,
+                image: 'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'
+            },
+            {
+                id: '8',
+                name: 'Iced Coffee',
+                description: 'Chilled coffee with milk',
+                price: 4.00,
+                category: 'Coffee',
+                preparationTime: 4,
+                image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6Pn6LikggT4F7fh2NXyxx6tFwZ_SvIDhKaQ&s'
+            }
+        ];
+
+        // ========== INITIALIZATION ==========
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeApp();
+            setupEventListeners();
+            setupSmoothScroll();
+            checkAuthStatus();
+            initializeDemoData();
+            loadRememberedCredentials();
+        });
+
+        // ========== LOAD REMEMBERED CREDENTIALS ==========
+        function loadRememberedCredentials() {
+            const rememberedEmail = localStorage.getItem('rememberedEmail');
+            const rememberedPassword = localStorage.getItem('rememberedPassword');
+            
+            if (rememberedEmail && rememberedPassword) {
+                document.getElementById('loginEmail').value = rememberedEmail;
+                document.getElementById('loginPassword').value = rememberedPassword;
+                document.getElementById('rememberMe').checked = true;
+            }
+        }
+
+        // ========== DEMO DATA INITIALIZATION ==========
+        function initializeDemoData() {
+            // Initialize localStorage with demo data if empty
+            if (!localStorage.getItem('coffeeShopUsers')) {
+                const demoUsers = [
+                    {
+                        id: 'demo_admin_001',
+                        name: 'Admin User',
+                        email: ADMIN_EMAIL,
+                        password: ADMIN_PASSWORD,
+                        phone: '+1 234 567 8900',
+                        role: 'admin',
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 'demo_customer_001',
+                        name: 'John Doe',
+                        email: 'customer@example.com',
+                        password: 'customer123',
+                        phone: '+1 987 654 3210',
+                        role: 'customer',
+                        createdAt: new Date().toISOString()
+                    }
+                ];
+                localStorage.setItem('coffeeShopUsers', JSON.stringify(demoUsers));
+            }
+
+            if (!localStorage.getItem('coffeeShopMenu')) {
+                localStorage.setItem('coffeeShopMenu', JSON.stringify(menuData));
+            }
+
+            if (!localStorage.getItem('coffeeShopOrders')) {
+                const demoOrders = [
+                    {
+                        orderId: 'ORD' + Date.now(),
+                        userId: 'demo_customer_001',
+                        customerName: 'John Doe',
+                        customerEmail: 'customer@example.com',
+                        items: [
+                            { name: 'Espresso', price: 3.50, quantity: 2, preparationTime: 3 },
+                            { name: 'Croissant', price: 3.00, quantity: 1, preparationTime: 2 }
+                        ],
+                        totalAmount: 10.00,
+                        estimatedTime: 8,
+                        status: 'completed',
+                        orderTime: new Date(Date.now() - 86400000).toISOString() // Yesterday
+                    },
+                    {
+                        orderId: 'ORD' + (Date.now() + 1),
+                        userId: 'demo_customer_001',
+                        customerName: 'John Doe',
+                        customerEmail: 'customer@example.com',
+                        items: [
+                            { name: 'Latte', price: 5.00, quantity: 1, preparationTime: 6 },
+                            { name: 'Chocolate Chip Cookie', price: 2.00, quantity: 2, preparationTime: 1 }
+                        ],
+                        totalAmount: 9.00,
+                        estimatedTime: 7,
+                        status: 'preparing',
+                        orderTime: new Date().toISOString()
+                    }
+                ];
+                localStorage.setItem('coffeeShopOrders', JSON.stringify(demoOrders));
+            }
+        }
+
+        // ========== AUTHENTICATION ==========
+        function initializeApp() {
+            // Load cart from localStorage
+            const savedCart = localStorage.getItem('coffeeShopCart');
+            if (savedCart) {
+                cart = JSON.parse(savedCart);
+                updateCartCount();
+            }
+
+            // Check if user is logged in
+            const savedUser = localStorage.getItem('coffeeShopUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                showMainApp();
+            }
+
+            // Load menu items
+            const savedMenu = localStorage.getItem('coffeeShopMenu');
+            if (savedMenu) {
+                menuItems = JSON.parse(savedMenu);
+            } else {
+                menuItems = menuData;
+            }
+        }
+
+        function checkAuthStatus() {
+            if (currentUser) {
+                if (currentUser.role === 'admin') {
+                    showAdminPanel();
+                } else {
+                    showMainApp();
+                }
+            } else {
+                showAuthPage();
+            }
+        }
+
+        function showAuthPage() {
+            document.getElementById('authPage').style.display = 'flex';
+            document.getElementById('mainApp').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'none';
+        }
+
+        function showMainApp() {
+            document.getElementById('authPage').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+            document.getElementById('adminPanel').style.display = 'none';
+            updateUserUI();
+            loadMenuItems();
+            loadUserOrders();
+            
+            // Show/hide admin link based on user role
+            const adminLink = document.getElementById('adminLink');
+            if (currentUser && currentUser.role === 'admin') {
+                adminLink.classList.remove('d-none');
+                adminLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    showAdminPanel();
+                });
+            } else {
+                adminLink.classList.add('d-none');
+            }
+        }
+
+        function showAdminPanel() {
+            document.getElementById('authPage').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+            document.getElementById('adminUserName').textContent = `Welcome, ${currentUser.name}`;
+            loadAdminData();
+        }
+
+        // ========== AUTH EVENT LISTENERS ==========
+        function setupAuthListeners() {
+            // Tab switching
+            const loginTab = document.getElementById('loginTab');
+            const signupTab = document.getElementById('signupTab');
+            const loginForm = document.getElementById('loginForm');
+            const signupForm = document.getElementById('signupForm');
+            const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+            
+            const switchToSignup = document.getElementById('switchToSignup');
+            const switchToLogin = document.getElementById('switchToLogin');
+            const forgotPasswordLink = document.getElementById('forgotPassword');
+            const backToLogin = document.getElementById('backToLogin');
+
+            // Switch to Login
+            function showLogin() {
+                loginTab.classList.add('active');
+                signupTab.classList.remove('active');
+                loginForm.classList.add('active');
+                signupForm.classList.remove('active');
+                forgotPasswordForm.classList.remove('active');
+            }
+
+            // Switch to Signup
+            function showSignup() {
+                signupTab.classList.add('active');
+                loginTab.classList.remove('active');
+                signupForm.classList.add('active');
+                loginForm.classList.remove('active');
+                forgotPasswordForm.classList.remove('active');
+            }
+
+            // Switch to Forgot Password
+            function showForgotPassword() {
+                forgotPasswordForm.classList.add('active');
+                loginForm.classList.remove('active');
+                signupForm.classList.remove('active');
+            }
+
+            // Event Listeners
+            loginTab.addEventListener('click', showLogin);
+            signupTab.addEventListener('click', showSignup);
+            switchToSignup.addEventListener('click', showSignup);
+            switchToLogin.addEventListener('click', showLogin);
+            forgotPasswordLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                showForgotPassword();
+            });
+            backToLogin.addEventListener('click', showLogin);
+
+            // Demo Admin Login
+            document.getElementById('demoAdminLogin').addEventListener('click', () => {
+                document.getElementById('loginEmail').value = ADMIN_EMAIL;
+                document.getElementById('loginPassword').value = ADMIN_PASSWORD;
+                document.getElementById('rememberMe').checked = true;
+                handleLogin();
+            });
+
+            // Login Handler
+            document.getElementById('loginSubmit').addEventListener('click', handleLogin);
+
+            // Signup Handler
+            document.getElementById('signupSubmit').addEventListener('click', handleSignup);
+
+            // Forgot Password Handler
+            document.getElementById('resetPasswordSubmit').addEventListener('click', handleForgotPassword);
+        }
+
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        function validatePassword(password) {
+            return password.length >= 6;
+        }
+
+        function handleLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+            
+            if (!email || !password) {
+                showMessage('error', 'Please fill in all fields');
+                return;
+            }
+            
+            if (!validateEmail(email)) {
+                showMessage('error', 'Please enter a valid email');
+                return;
+            }
+            
+            // Get users from localStorage
+            const users = JSON.parse(localStorage.getItem('coffeeShopUsers') || '[]');
+            const user = users.find(u => u.email === email && u.password === password);
+            
+            if (user) {
+                // Success
+                currentUser = user;
+                localStorage.setItem('coffeeShopUser', JSON.stringify(user));
+                
+                // Save credentials if Remember Me is checked
+                if (rememberMe) {
+                    localStorage.setItem('rememberedEmail', email);
+                    localStorage.setItem('rememberedPassword', password);
+                } else {
+                    // Clear remembered credentials
+                    localStorage.removeItem('rememberedEmail');
+                    localStorage.removeItem('rememberedPassword');
+                }
+                
+                showMessage('success', 'Login successful!');
+                
+                if (user.role === 'admin') {
+                    showAdminPanel();
+                } else {
+                    showMainApp();
+                }
+                
+                // Clear form
+                document.getElementById('loginEmail').value = '';
+                document.getElementById('loginPassword').value = '';
+                document.getElementById('rememberMe').checked = false;
+            } else {
+                showMessage('error', 'Invalid email or password');
+            }
+        }
+
+        function handleSignup() {
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('signupConfirmPassword').value;
+            const phone = document.getElementById('signupPhone').value;
+            
+            // Validation
+            if (!name || !email || !password || !confirmPassword) {
+                showMessage('error', 'Please fill in all required fields');
+                return;
+            }
+            
+            if (!validateEmail(email)) {
+                showMessage('error', 'Please enter a valid email');
+                return;
+            }
+            
+            if (!validatePassword(password)) {
+                showMessage('error', 'Password must be at least 6 characters');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showMessage('error', 'Passwords do not match');
+                return;
+            }
+            
+            // Check if user already exists
+            const users = JSON.parse(localStorage.getItem('coffeeShopUsers') || '[]');
+            if (users.some(u => u.email === email)) {
+                showMessage('error', 'Email already registered');
+                return;
+            }
+            
+            // Create new user
+            const newUser = {
+                id: 'user_' + Date.now(),
+                name: name,
+                email: email,
+                password: password,
+                phone: phone || '',
+                role: 'customer',
+                createdAt: new Date().toISOString()
+            };
+            
+            // Save user
+            users.push(newUser);
+            localStorage.setItem('coffeeShopUsers', JSON.stringify(users));
+            
+            // Auto login
+            currentUser = newUser;
+            localStorage.setItem('coffeeShopUser', JSON.stringify(newUser));
+            
+            showMessage('success', 'Account created successfully!');
+            showMainApp();
+            
+            // Clear form
+            document.getElementById('signupName').value = '';
+            document.getElementById('signupEmail').value = '';
+            document.getElementById('signupPassword').value = '';
+            document.getElementById('signupConfirmPassword').value = '';
+            document.getElementById('signupPhone').value = '';
+        }
+
+        function handleForgotPassword() {
+            const email = document.getElementById('resetEmail').value;
+            
+            if (!email || !validateEmail(email)) {
+                showMessage('error', 'Please enter a valid email');
+                return;
+            }
+            
+            showMessage('success', 'Password reset link sent to your email');
+            
+            setTimeout(() => {
+                document.getElementById('loginTab').click();
+                document.getElementById('resetEmail').value = '';
+            }, 2000);
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('coffeeShopUser');
+            showAuthPage();
+            showMessage('info', 'You have been logged out.');
+        }
+
+        // ========== USER INTERFACE ==========
+        function updateUserUI() {
+            if (currentUser) {
+                document.getElementById('userName').textContent = `Hi, ${currentUser.name}`;
+                
+                // Show/hide admin link based on user role
+                const adminLink = document.getElementById('adminLink');
+                if (currentUser.role === 'admin') {
+                    adminLink.classList.remove('d-none');
+                    adminLink.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        showAdminPanel();
+                    });
+                } else {
+                    adminLink.classList.add('d-none');
+                }
+            }
+        }
+
+        // ========== PAGE NAVIGATION ==========
+        function setupSmoothScroll() {
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        // Update active nav link
+                        document.querySelectorAll('.nav-link').forEach(link => {
+                            link.classList.remove('active');
+                        });
+                        this.classList.add('active');
+                        
+                        // Scroll to section
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            // Highlight active section on scroll
+            window.addEventListener('scroll', function() {
+                let current = '';
+                const sections = document.querySelectorAll('.page-section');
+                
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop - 100;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= sectionTop) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === `#${current}`) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        }
+
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                window.scrollTo({
+                    top: section.offsetTop - 80,
+                    behavior: 'smooth'
+                });
+                
+                // Update active nav link
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === `#${sectionId}`) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+        }
+
+        // ========== MENU MANAGEMENT ==========
+        function loadMenuItems() {
+            const savedMenu = localStorage.getItem('coffeeShopMenu');
+            if (savedMenu) {
+                menuItems = JSON.parse(savedMenu);
+            } else {
+                menuItems = menuData;
+            }
+            
+            renderMenuItems();
+        }
+
+        function renderMenuItems() {
+            const menuGrid = document.getElementById('menuGrid');
+            if (!menuGrid) return;
+
+            if (menuItems.length === 0) {
+                menuGrid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-coffee"></i>
+                        <h3>Menu Coming Soon</h3>
+                        <p>Our menu is being prepared. Please check back later.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            menuGrid.innerHTML = menuItems.map(item => {
+                const cartItem = cart.find(cartItem => cartItem.id === item.id);
+                const quantity = cartItem ? cartItem.quantity : 0;
+                
+                return `
+                <div class="menu-item">
+                    <div class="menu-item-img">
+                        <img src="${item.image || 'https://images.unsplash.com/photo-1498804103079-a6351b050096?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'}" alt="${item.name}">
+                    </div>
+                    <div class="menu-item-content">
+                        <h3 class="menu-item-title">${item.name}</h3>
+                        <p class="menu-item-desc">${item.description}</p>
+                        <div class="menu-item-footer">
+                            <div>
+                                <div class="price">$${item.price.toFixed(2)}</div>
+                                <div class="time-badge">${item.preparationTime} mins</div>
+                            </div>
+                            <div class="quantity-control">
+                                <button class="quantity-btn" onclick="updateCartItemQuantity('${item.id}', -1)">-</button>
+                                <span style="padding: 0 10px; font-weight: bold; min-width: 30px; text-align: center;">${quantity}</span>
+                                <button class="quantity-btn" onclick="updateCartItemQuantity('${item.id}', 1)">+</button>
+                            </div>
+                        </div>
+                        <button class="btn btn-outline w-100 mt-2" onclick="addToCart('${item.id}')">
+                            <i class="fas fa-cart-plus"></i> Add to Cart
+                        </button>
+                    </div>
+                </div>
+            `}).join('');
+        }
+
+        // ========== CART MANAGEMENT ==========
+        function addToCart(itemId) {
+            if (!currentUser) {
+                showMessage('error', 'Please login to add items to cart');
+                return;
+            }
+
+            const item = menuItems.find(i => i.id === itemId);
+            if (!item) return;
+
+            const existingItem = cart.find(i => i.id === itemId);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id: itemId,
+                    name: item.name,
+                    price: item.price,
+                    quantity: 1,
+                    preparationTime: item.preparationTime
+                });
+            }
+
+            saveCart();
+            updateCartCount();
+            renderMenuItems();
+            showMessage('success', `${item.name} added to cart!`);
+        }
+
+        function updateCartItemQuantity(itemId, change) {
+            const itemIndex = cart.findIndex(i => i.id === itemId);
+            
+            if (itemIndex === -1 && change > 0) {
+                addToCart(itemId);
+                return;
+            }
+
+            if (itemIndex !== -1) {
+                cart[itemIndex].quantity += change;
+                
+                if (cart[itemIndex].quantity <= 0) {
+                    cart.splice(itemIndex, 1);
+                    showMessage('info', 'Item removed from cart.');
+                }
+                
+                saveCart();
+                updateCartCount();
+                renderMenuItems();
+            }
+        }
+
+        function renderCart() {
+            const cartItems = document.getElementById('cartItems');
+            if (!cartItems) return;
+
+            if (cart.length === 0) {
+                cartItems.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-shopping-cart"></i>
+                        <h3>Your cart is empty</h3>
+                        <p>Add some delicious items from our menu!</p>
+                        <button class="btn mt-2" onclick="hideModal('cartModal'); scrollToSection('menu')">
+                            <i class="fas fa-utensils"></i> Browse Menu
+                        </button>
+                    </div>
+                `;
+                document.getElementById('cartTotal').textContent = '0.00';
+                document.getElementById('placeOrderBtn').disabled = true;
+                return;
+            }
+
+            let total = 0;
+            cartItems.innerHTML = cart.map(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                return `
+                    <div class="cart-item">
+                        <div class="cart-item-info">
+                            <h4>${item.name}</h4>
+                            <div class="cart-item-price">$${item.price.toFixed(2)} each</div>
+                        </div>
+                        <div class="quantity-control">
+                            <button class="quantity-btn" onclick="updateCartItemQuantity('${item.id}', -1)">-</button>
+                            <span style="padding: 0 10px; font-weight: bold;">${item.quantity}</span>
+                            <button class="quantity-btn" onclick="updateCartItemQuantity('${item.id}', 1)">+</button>
+                        </div>
+                        <div style="font-weight: bold; color: var(--primary);">
+                            $${itemTotal.toFixed(2)}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('cartTotal').textContent = total.toFixed(2);
+            document.getElementById('placeOrderBtn').disabled = false;
+        }
+
+        function updateCartCount() {
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartCount').textContent = count;
+        }
+
+        function saveCart() {
+            localStorage.setItem('coffeeShopCart', JSON.stringify(cart));
+        }
+
+        function clearCart() {
+            cart = [];
+            saveCart();
+            updateCartCount();
+            renderMenuItems();
+        }
+
+        // ========== ORDER MANAGEMENT ==========
+        function placeOrder() {
+            if (!currentUser) {
+                showMessage('error', 'Please login to place order');
+                return;
+            }
+
+            if (cart.length === 0) {
+                showMessage('error', 'Your cart is empty!');
+                return;
+            }
+
+            try {
+                // Generate order ID
+                const orderId = 'ORD' + Date.now() + Math.random().toString(36).substr(2, 4).toUpperCase();
+                
+                // Calculate total and estimated time
+                let totalAmount = 0;
+                let maxPrepTime = 0;
+                
+                const orderItems = cart.map(item => {
+                    const itemTotal = item.price * item.quantity;
+                    totalAmount += itemTotal;
+                    maxPrepTime = Math.max(maxPrepTime, item.preparationTime);
+                    
+                    return {
+                        name: item.name,
+                        price: item.price,
+                        quantity: item.quantity,
+                        preparationTime: item.preparationTime
+                    };
+                });
+                
+                const estimatedTime = maxPrepTime + 5; // +5 minutes buffer
+                
+                // Create order
+                const order = {
+                    orderId,
+                    userId: currentUser.id,
+                    customerName: currentUser.name,
+                    customerEmail: currentUser.email,
+                    items: orderItems,
+                    totalAmount,
+                    estimatedTime,
+                    status: 'pending',
+                    orderTime: new Date().toISOString()
+                };
+
+                // Save order to localStorage
+                const orders = JSON.parse(localStorage.getItem('coffeeShopOrders') || '[]');
+                orders.push(order);
+                localStorage.setItem('coffeeShopOrders', JSON.stringify(orders));
+
+                // Clear cart and show success
+                clearCart();
+                renderCart();
+                hideModal('cartModal');
+                
+                // Show success modal
+                document.getElementById('orderIdDisplay').textContent = orderId;
+                document.getElementById('estimatedTime').textContent = `${estimatedTime} minutes`;
+                showModal('orderSuccessModal');
+                
+                showMessage('success', 'Order placed successfully!');
+                
+                // Reload orders section
+                loadUserOrders();
+                
+                // Update admin panel if admin is logged in
+                if (currentUser.role === 'admin') {
+                    loadAdminData();
+                }
+                
+            } catch (error) {
+                console.error('Order error:', error);
+                showMessage('error', 'Failed to place order. Please try again.');
+            }
+        }
+
+        function loadUserOrders() {
+            const ordersList = document.getElementById('ordersList');
+            if (!ordersList) return;
+
+            if (!currentUser) {
+                ordersList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <h3>Please login to view orders</h3>
+                        <p>Login to see your order history</p>
+                        <button class="btn mt-2" onclick="showAuthPage()">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            try {
+                // Load orders from localStorage
+                const allOrders = JSON.parse(localStorage.getItem('coffeeShopOrders') || '[]');
+                const userOrders = allOrders.filter(order => order.userId === currentUser.id)
+                    .sort((a, b) => new Date(b.orderTime) - new Date(a.orderTime));
+                
+                renderUserOrders(userOrders);
+            } catch (error) {
+                console.error('Error loading orders:', error);
+                ordersList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Error loading orders</h3>
+                        <p>Please try again later</p>
+                    </div>
+                `;
+            }
+        }
+
+        function renderUserOrders(orders) {
+            const ordersList = document.getElementById('ordersList');
+            if (!ordersList) return;
+
+            if (orders.length === 0) {
+                ordersList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-receipt"></i>
+                        <h3>No orders yet</h3>
+                        <p>Place your first order from our menu!</p>
+                        <button class="btn mt-2" onclick="scrollToSection('menu')">
+                            <i class="fas fa-utensils"></i> Browse Menu
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            ordersList.innerHTML = orders.map(order => {
+                const orderTime = new Date(order.orderTime).toLocaleString();
+                const statusClass = `status-${order.status}`;
+                
+                return `
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div class="order-id">${order.orderId}</div>
+                            <div class="order-status ${statusClass}">${order.status.toUpperCase()}</div>
+                        </div>
+                        
+                        <div class="order-items">
+                            ${order.items.map(item => `
+                                <div class="order-item">
+                                    <span>${item.quantity}x ${item.name}</span>
+                                    <span>$${(item.price * item.quantity).toFixed(2)}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <div class="order-footer">
+                            <div>
+                                <div class="order-total">Total: $${order.totalAmount.toFixed(2)}</div>
+                                <div class="order-time">Ordered: ${orderTime}</div>
+                            </div>
+                            <div class="estimated-time">
+                                ${order.status === 'completed' ? 
+                                    '<i class="fas fa-check"></i> Completed' :
+                                    order.status === 'cancelled' ?
+                                    '<i class="fas fa-times"></i> Cancelled' :
+                                    `Est. time: ${order.estimatedTime} mins`
+                                }
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ========== ADMIN FUNCTIONS ==========
+        function loadAdminData() {
+            loadAdminOrders();
+            loadAdminMenu();
+            loadAdminUsers();
+            loadAdminAnalytics();
+            updateAdminStats();
+        }
+
+        function loadAdminOrders() {
+            const allOrders = JSON.parse(localStorage.getItem('coffeeShopOrders') || '[]');
+            const sortedOrders = allOrders.sort((a, b) => new Date(b.orderTime) - new Date(a.orderTime));
+            
+            renderAdminOrders(sortedOrders);
+        }
+
+        function renderAdminOrders(orders) {
+            const ordersList = document.getElementById('adminOrdersList');
+            if (!ordersList) return;
+
+            if (orders.length === 0) {
+                ordersList.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center">
+                            <div class="empty-state">
+                                <i class="fas fa-shopping-cart"></i>
+                                <h3>No orders yet</h3>
+                                <p>No orders have been placed yet.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            ordersList.innerHTML = orders.map(order => {
+                const orderTime = new Date(order.orderTime).toLocaleString();
+                const itemsSummary = order.items.map(item => `${item.quantity}x ${item.name}`).join(', ');
+                
+                return `
+                    <tr>
+                        <td>${order.orderId}</td>
+                        <td>${order.customerName}<br><small>${order.customerEmail}</small></td>
+                        <td>${itemsSummary}</td>
+                        <td>$${order.totalAmount.toFixed(2)}</td>
+                        <td>${orderTime}</td>
+                        <td>
+                            <select class="status-select" data-order-id="${order.orderId}" onchange="updateOrderStatus('${order.orderId}', this.value)">
+                                <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>Pending</option>
+                                <option value="preparing" ${order.status === 'preparing' ? 'selected' : ''}>Preparing</option>
+                                <option value="ready" ${order.status === 'ready' ? 'selected' : ''}>Ready</option>
+                                <option value="completed" ${order.status === 'completed' ? 'selected' : ''}>Completed</option>
+                                <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+                            </select>
+                        </td>
+                        <td>
+                            <button class="btn btn-outline btn-sm" onclick="viewOrderDetails('${order.orderId}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteOrder('${order.orderId}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function updateOrderStatus(orderId, newStatus) {
+            const orders = JSON.parse(localStorage.getItem('coffeeShopOrders') || '[]');
+            const orderIndex = orders.findIndex(order => order.orderId === orderId);
+            
+            if (orderIndex !== -1) {
+                orders[orderIndex].status = newStatus;
+                localStorage.setItem('coffeeShopOrders', JSON.stringify(orders));
+                
+                showMessage('success', `Order ${orderId} status updated to ${newStatus}`);
+                
+                // Update admin display
+                loadAdminOrders();
+                updateAdminStats();
+                
+                // Update user view if they're viewing orders
+                if (currentUser && currentUser.role !== 'admin') {
+                    loadUserOrders();
+                }
+            }
+        }
+
+        function deleteOrder(orderId) {
+            if (confirm('Are you sure you want to delete this order?')) {
+                const orders = JSON.parse(localStorage.getItem('coffeeShopOrders') || '[]');
+                const filteredOrders = orders.filter(order => order.orderId !== orderId);
+                
+                localStorage.setItem('coffeeShopOrders', JSON.stringify(filteredOrders));
+                showMessage('success', `Order ${orderId} deleted`);
+                loadAdminOrders();
+                updateAdminStats();
+            }
+        }
+
+        function loadAdminMenu() {
+            const savedMenu = localStorage.getItem('coffeeShopMenu');
+            menuItems = savedMenu ? JSON.parse(savedMenu) : menuData;
+            renderAdminMenu();
+        }
+
+        function renderAdminMenu() {
+            const menuList = document.getElementById('adminMenuList');
+            if (!menuList) return;
+
+            if (menuItems.length === 0) {
+                menuList.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center">
+                            <div class="empty-state">
+                                <i class="fas fa-coffee"></i>
+                                <h3>No menu items</h3>
+                                <p>Add your first menu item!</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            menuList.innerHTML = menuItems.map(item => `
+                <tr>
+                    <td>${item.name}</td>
+                    <td>${item.description}</td>
+                    <td>$${item.price.toFixed(2)}</td>
+                    <td>${item.category}</td>
+                    <td>${item.preparationTime} mins</td>
+                    <td>
+                        <button class="btn btn-outline btn-sm" onclick="editMenuItem('${item.id}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteMenuItem('${item.id}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function editMenuItem(itemId) {
+            const item = menuItems.find(i => i.id === itemId);
+            if (!item) return;
+
+            editingMenuItemId = itemId;
+            document.getElementById('itemName').value = item.name;
+            document.getElementById('itemDescription').value = item.description;
+            document.getElementById('itemPrice').value = item.price;
+            document.getElementById('itemCategory').value = item.category;
+            document.getElementById('itemPrepTime').value = item.preparationTime;
+            document.getElementById('menuItemModalTitle').textContent = 'Edit Menu Item';
+            showModal('menuItemModal');
+        }
+
+        function deleteMenuItem(itemId) {
+            if (confirm('Are you sure you want to delete this menu item?')) {
+                menuItems = menuItems.filter(item => item.id !== itemId);
+                localStorage.setItem('coffeeShopMenu', JSON.stringify(menuItems));
+                
+                // Update both admin and user views
+                renderAdminMenu();
+                renderMenuItems();
+                showMessage('success', 'Menu item deleted');
+            }
+        }
+
+        function saveMenuItem() {
+            const name = document.getElementById('itemName').value;
+            const description = document.getElementById('itemDescription').value;
+            const price = parseFloat(document.getElementById('itemPrice').value);
+            const category = document.getElementById('itemCategory').value;
+            const prepTime = parseInt(document.getElementById('itemPrepTime').value);
+
+            if (!name || !description || !price || !prepTime) {
+                showMessage('error', 'Please fill in all fields');
+                return;
+            }
+
+            if (editingMenuItemId) {
+                // Update existing item
+                const itemIndex = menuItems.findIndex(item => item.id === editingMenuItemId);
+                if (itemIndex !== -1) {
+                    menuItems[itemIndex] = {
+                        ...menuItems[itemIndex],
+                        name,
+                        description,
+                        price,
+                        category,
+                        preparationTime: prepTime
+                    };
+                }
+                editingMenuItemId = null;
+            } else {
+                // Add new item
+                const newItem = {
+                    id: 'item_' + Date.now(),
+                    name,
+                    description,
+                    price,
+                    category,
+                    preparationTime: prepTime,
+                    image: getDefaultImageForCategory(category)
+                };
+                menuItems.push(newItem);
+            }
+
+            localStorage.setItem('coffeeShopMenu', JSON.stringify(menuItems));
+            
+            // Update views
+            renderAdminMenu();
+            renderMenuItems();
+            hideModal('menuItemModal');
+            
+            // Clear form
+            document.getElementById('itemName').value = '';
+            document.getElementById('itemDescription').value = '';
+            document.getElementById('itemPrice').value = '';
+            document.getElementById('itemPrepTime').value = '';
+            
+            showMessage('success', editingMenuItemId ? 'Menu item updated' : 'Menu item added');
+        }
+
+        function getDefaultImageForCategory(category) {
+            const images = {
+                'Coffee': 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+                'Tea': 'https://images.unsplash.com/photo-1550948392-fd5a8f5c6f37?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+                'Pastry': 'https://images.unsplash.com/photo-1555507036-ab794f27d2e9?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+                'Sandwich': 'https://images.unsplash.com/photo-1567234669003-dce7a7a88821?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+                'Dessert': 'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'
+            };
+            return images[category] || 'https://images.unsplash.com/photo-1498804103079-a6351b050096?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80';
+        }
+
+        function loadAdminUsers() {
+            const users = JSON.parse(localStorage.getItem('coffeeShopUsers') || '[]');
+            const customers = users.filter(user => user.role === 'customer');
+            renderAdminUsers(customers);
+        }
+
+        function renderAdminUsers(users) {
+            const usersList = document.getElementById('adminUsersList');
+            if (!usersList) return;
+
+            if (users.length === 0) {
+                usersList.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center">
+                            <div class="empty-state">
+                                <i class="fas fa-users"></i>
+                                <h3>No customers</h3>
+                                <p>No customers have registered yet.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            usersList.innerHTML = users.map(user => {
+                const joinDate = new Date(user.createdAt).toLocaleDateString();
+                const allOrders = JSON.parse(localStorage.getItem('coffeeShopOrders') || '[]');
+                const userOrders = allOrders.filter(order => order.userId === user.id);
+                
+                return `
+                    <tr>
+                        <td>${user.name}</td>
+                        <td>${user.email}</td>
+                        <td>${user.phone || 'N/A'}</td>
+                        <td>${userOrders.length}</td>
+                        <td>${joinDate}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function loadAdminAnalytics() {
+            const orders = JSON.parse(localStorage.getItem('coffeeShopOrders') || '[]');
+            
+            // Today's orders
+            const today = new Date().toDateString();
+            const todayOrders = orders.filter(order => 
+                new Date(order.orderTime).toDateString() === today
+            );
+            
+            // Calculate today's revenue
+            const todayRevenue = todayOrders.reduce((sum, order) => sum + order.totalAmount, 0);
+            
+            // Find top items
+            const itemCounts = {};
+            orders.forEach(order => {
+                order.items.forEach(item => {
+                    itemCounts[item.name] = (itemCounts[item.name] || 0) + item.quantity;
+                });
+            });
+            
+            const topItems = Object.entries(itemCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 3);
+            
+            // Update display
+            document.getElementById('todayOrders').textContent = todayOrders.length;
+            document.getElementById('todayRevenue').textContent = `$${todayRevenue.toFixed(2)}`;
+            
+            const topItemsElement = document.getElementById('topItems');
+            if (topItemsElement) {
+                if (topItems.length > 0) {
+                    topItemsElement.innerHTML = topItems.map(([item, count]) => `
+                        <div style="margin: 0.5rem 0; padding: 0.5rem; background: #f8f9fa; border-radius: 5px;">
+                            ${item}: ${count} sold
+                        </div>
+                    `).join('');
+                } else {
+                    topItemsElement.innerHTML = '<p>No sales data yet</p>';
+                }
+            }
+        }
+
+        function updateAdminStats() {
+            const orders = JSON.parse(localStorage.getItem('coffeeShopOrders') || '[]');
+            const users = JSON.parse(localStorage.getItem('coffeeShopUsers') || '[]');
+            
+            // Total orders
+            document.getElementById('totalOrders').textContent = orders.length;
+            
+            // Pending orders
+            const pendingOrders = orders.filter(order => order.status === 'pending');
+            document.getElementById('pendingOrders').textContent = pendingOrders.length;
+            
+            // Total customers (excluding admin)
+            const customers = users.filter(user => user.role === 'customer');
+            document.getElementById('totalCustomers').textContent = customers.length;
+            
+            // Total revenue
+            const totalRevenue = orders.reduce((sum, order) => sum + order.totalAmount, 0);
+            document.getElementById('totalRevenue').textContent = `$${totalRevenue.toFixed(2)}`;
+        }
+
+        // ========== MODAL MANAGEMENT ==========
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function hideModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // ========== MESSAGE SYSTEM ==========
+        function showMessage(type, text) {
+            // Remove existing messages
+            const existingMessage = document.querySelector('.message-toast');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+
+            // Create new message
+            const message = document.createElement('div');
+            message.className = `message-toast message ${type}`;
+            message.innerHTML = `
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <span>${text}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; cursor: pointer; color: inherit; font-size: 1.2rem;">&times;</button>
+                </div>
+            `;
+
+            // Style for toast
+            message.style.position = 'fixed';
+            message.style.top = '20px';
+            message.style.right = '20px';
+            message.style.zIndex = '3000';
+            message.style.minWidth = '300px';
+            message.style.maxWidth = '400px';
+            message.style.boxShadow = '0 5px 15px rgba(0,0,0,0.2)';
+            message.style.borderRadius = '5px';
+
+            document.body.appendChild(message);
+
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (message.parentElement) {
+                    message.remove();
+                }
+            }, 5000);
+        }
+
+        // ========== EVENT LISTENERS ==========
+        function setupEventListeners() {
+            // Auth listeners
+            setupAuthListeners();
+            
+            // Cart icon
+            document.getElementById('cartIcon').addEventListener('click', () => {
+                showModal('cartModal');
+                renderCart();
+            });
+
+            // Logout buttons
+            document.getElementById('logoutBtn').addEventListener('click', logout);
+            document.getElementById('adminLogoutBtn').addEventListener('click', logout);
+
+            // Go to user view from admin
+            document.getElementById('goToUserView').addEventListener('click', () => {
+                if (currentUser) {
+                    showMainApp();
+                }
+            });
+
+            // Modal close buttons
+            document.getElementById('closeCartModal').addEventListener('click', () => hideModal('cartModal'));
+            document.getElementById('closeSuccessModal').addEventListener('click', () => hideModal('orderSuccessModal'));
+
+            // Close modals when clicking outside
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        hideModal(modal.id);
+                    }
+                });
+            });
+
+            // Place order
+            document.getElementById('placeOrderBtn').addEventListener('click', placeOrder);
+
+            // Admin tabs
+            document.querySelectorAll('.admin-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Update active tab
+                    document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show corresponding content
+                    document.querySelectorAll('.admin-content').forEach(content => {
+                        content.classList.add('d-none');
+                    });
+                    document.getElementById(tabId + 'Tab').classList.remove('d-none');
+                });
+            });
+
+            // Add menu item button
+            document.getElementById('addMenuItemBtn').addEventListener('click', () => {
+                editingMenuItemId = null;
+                document.getElementById('menuItemModalTitle').textContent = 'Add Menu Item';
+                document.getElementById('itemName').value = '';
+                document.getElementById('itemDescription').value = '';
+                document.getElementById('itemPrice').value = '';
+                document.getElementById('itemPrepTime').value = '';
+                document.getElementById('itemCategory').value = 'Coffee';
+                showModal('menuItemModal');
+            });
+
+            // Save menu item button
+            document.getElementById('saveMenuItemBtn').addEventListener('click', saveMenuItem);
+        }
+
+        // ========== UTILITY FUNCTIONS ==========
+        function viewOrderDetails(orderId) {
+            const orders = JSON.parse(localStorage.getItem('coffeeShopOrders') || '[]');
+            const order = orders.find(o => o.orderId === orderId);
+            
+            if (order) {
+                alert(`Order Details:\n\nOrder ID: ${order.orderId}\nCustomer: ${order.customerName}\nEmail: ${order.customerEmail}\nStatus: ${order.status}\nTotal: $${order.totalAmount}\nOrder Time: ${new Date(order.orderTime).toLocaleString()}\n\nItems:\n${order.items.map(item => `  ${item.quantity}x ${item.name} - $${(item.price * item.quantity).toFixed(2)}`).join('\n')}`);
+            }
+        }
+
+        // Initialize event listeners
+        window.onload = () => {
+            setupEventListeners();
+            // Add a welcome message for demo
+            setTimeout(() => {
+                if (!currentUser) {
+                    showMessage('info', 'Demo: Use "admin@brotherscoffee.com" with password "admin123" for admin access');
+                }
+            }, 1000);
+        };
+    </script>
+</body>
+</html>
